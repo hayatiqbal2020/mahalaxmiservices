@@ -59,6 +59,8 @@ export default function AdminShell({
   const pathname = usePathname();
   const [open, setOpen] = useState(false); // phone: menu slid in
   const [hidden, setHidden] = useState(false); // desktop: menu tucked away
+  const [clicked, setClicked] = useState({ from: pathname, href: "" });
+  const current = clicked.from === pathname && clicked.href ? clicked.href : pathname; // highlight follows the click at once
   const [query, setQuery] = useState({ path: pathname, text: "" });
   const search = query.path === pathname ? query.text : ""; // a new page starts with an empty search
   const input = useRef<HTMLInputElement>(null);
@@ -93,9 +95,9 @@ export default function AdminShell({
             <div className="adm-nav-group" key={g.heading}>
               <p className="adm-nav-heading">{g.heading}</p>
               {g.items.map((m) => {
-                const on = pathname.startsWith(m.href);
+                const on = current.startsWith(m.href);
                 return (
-                  <Link key={m.href} href={m.href} className={`adm-nav-item${on ? " on" : ""}`} aria-current={on ? "page" : undefined} onClick={() => setOpen(false)}>
+                  <Link key={m.href} href={m.href} className={`adm-nav-item${on ? " on" : ""}`} aria-current={on ? "page" : undefined} onClick={() => { setClicked({ from: pathname, href: m.href }); setOpen(false); }}>
                     <Icon name={m.icon} />
                     <span>{m.label}</span>
                   </Link>

@@ -77,9 +77,12 @@
 .adm-head h1{font-size:clamp(25px,2.3vw,33px);font-weight:500;letter-spacing:-.8px;line-height:1.2}
 .adm-head-note{display:flex;align-items:center;gap:7px;margin-bottom:6px;color:#9a9eae;font-size:11px}
 .adm-live{width:7px;height:7px;border-radius:50%;background:#53bd79;box-shadow:0 0 0 3px #53bd791c}
-.adm-loading{height:3px;overflow:hidden;border-radius:3px;background:#e7e9f2}
-.adm-loading span{display:block;width:35%;height:100%;background:var(--a-blue);animation:admLoad 1.2s ease-in-out infinite alternate}
-@keyframes admLoad{to{transform:translateX(180%)}}
+.adm-loader{display:flex;align-items:center;justify-content:center;gap:10px;min-height:150px;padding:30px 20px;color:var(--a-muted);font-size:12px}
+.adm-loader::before{content:"";width:20px;height:20px;border:2.5px solid #e3e6f5;border-top-color:var(--a-blue);border-radius:50%;animation:admSpin .7s linear infinite}
+@keyframes admSpin{to{transform:rotate(360deg)}}
+.adm-skel{display:inline-block;width:56px;height:26px;border-radius:6px;background:linear-gradient(90deg,#eef0f6 25%,#f7f8fc 50%,#eef0f6 75%);background-size:200% 100%;animation:admShimmer 1.2s linear infinite}
+.adm-skel.sm{width:110px;height:10px}
+@keyframes admShimmer{to{background-position:-200% 0}}
 
 /* dashboard */
 .adm-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:17px;margin-bottom:19px}

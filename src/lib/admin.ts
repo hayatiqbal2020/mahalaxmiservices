@@ -30,15 +30,15 @@ export const requireAdmin = cache(async () => {
   await connection(); // always decided per request, never at build time
   if (!supabaseConfigured) redirect("/admin/login");
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect("/admin/login");
+  // The token is verified here; the database checks it again on every query.
+  const { data: auth } = await supabase.auth.getClaims();
+  const userId = auth?.claims?.sub;
+  if (!userId) redirect("/admin/login");
 
   const { data: profile } = await supabase
     .from("profiles")
     .select("id, email, full_name, phone, is_active, created_at")
-    .eq("id", user.id)
+    .eq("id", userId)
     .maybeSingle<Profile>();
   if (!profile?.is_active) redirect("/admin/signout?reason=inactive");
 

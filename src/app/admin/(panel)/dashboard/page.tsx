@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { Icon } from "@/components/admin/AdminShell";
+import Loader from "@/components/admin/Loader";
 import PageHead from "@/components/admin/PageHead";
 import { formatDate, requireAdmin, type Enquiry } from "@/lib/admin";
 
@@ -11,7 +13,7 @@ const parts = (d: Date) => {
   return { day: s, month: s.slice(0, 7) };
 };
 
-export default async function DashboardPage() {
+async function DashboardData() {
   const { supabase } = await requireAdmin();
   const now = new Date();
   const today = parts(now);
@@ -76,8 +78,6 @@ export default async function DashboardPage() {
 
   return (
     <>
-      <PageHead title="Dashboard" note={<><span className="adm-live"></span>Live website data</>} />
-
       <div className="adm-stats">
         {stats.map((s) => (
           <Link href={s.href} className="adm-stat" key={s.label}>
@@ -156,6 +156,59 @@ export default async function DashboardPage() {
           <p className="adm-empty">{latest.error ? "Could not load enquiries." : "No enquiries yet."}</p>
         )}
       </section>
+    </>
+  );
+}
+
+const CARDS = [
+  ["Total enquiries", "purple", "enquiry"],
+  ["This month", "green", "dashboard"],
+  ["Users", "blue", "users"],
+  ["Waiting for activation", "orange", "users"],
+] as const;
+
+// Same frames as the real dashboard, with loaders where the numbers go.
+function DashboardLoading() {
+  return (
+    <>
+      <div className="adm-stats">
+        {CARDS.map(([label, tone, icon]) => (
+          <div className="adm-stat" key={label}>
+            <div>
+              <span className="adm-stat-label">{label}</span>
+              <span className="adm-skel"></span>
+              <span className="adm-skel sm"></span>
+            </div>
+            <span className={`adm-stat-icon ${tone}`}><Icon name={icon} size={21} /></span>
+          </div>
+        ))}
+      </div>
+      <div className="adm-grid">
+        <section className="adm-card pad">
+          <div className="adm-card-head"><div><h2>Enquiries overview</h2><p>Enquiries received per month · last {MONTHS} months</p></div></div>
+          <Loader label="Loading chart…" />
+        </section>
+        <section className="adm-card pad">
+          <div className="adm-card-head"><div><h2>Services in demand</h2><p>What customers asked for · last {MONTHS} months</p></div></div>
+          <Loader />
+        </section>
+      </div>
+      <section className="adm-card">
+        <div className="adm-card-head"><div><h2>Recent enquiries</h2><p>The five newest</p></div></div>
+        <Loader label="Loading enquiries…" />
+      </section>
+    </>
+  );
+}
+
+// The heading and card frames show at once; the numbers load inside them.
+export default function DashboardPage() {
+  return (
+    <>
+      <PageHead title="Dashboard" note={<><span className="adm-live"></span>Live website data</>} />
+      <Suspense fallback={<DashboardLoading />}>
+        <DashboardData />
+      </Suspense>
     </>
   );
 }
