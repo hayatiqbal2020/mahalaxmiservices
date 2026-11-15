@@ -7,7 +7,7 @@ export default function Hero() {
         <div>
           <div className="badge"><i></i> Authorised Fire Extinguisher Dealer</div>
           <h1>Protecting Lives &amp; Property From <span>Fire</span></h1>
-          <p>Mahalaxmi Services supplies, installs, refills and maintains ISI-marked fire extinguishers and fire safety systems for homes, offices, factories, hospitals, schools and commercial spaces.</p>
+          <p>Mahalaxmi Services supplies, installs, refills and maintains ISI-marked fire extinguishers and fire safety systems for homes, offices, factories, hospitals, schools and commercial spaces across {site.city}.</p>
           <div className="hero-btns">
             <a href="#contact" className="btn btn-primary">Book a Free Site Visit →</a>
             <a href={site.telHref} className="btn btn-outline">📞 Call Now</a>
