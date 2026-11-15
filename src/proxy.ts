@@ -41,11 +41,11 @@ export async function proxy(request: NextRequest) {
       },
     },
   });
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // Checks the login token on this server (and renews it when it has expired)
+  // without calling Supabase on every click.
+  const { data } = await supabase.auth.getClaims();
 
-  if (!user && !PUBLIC.includes(pathname)) {
+  if (!data?.claims && !PUBLIC.includes(pathname)) {
     const redirect = to("/admin/login");
     response.cookies.getAll().forEach((c) => redirect.cookies.set(c));
     return redirect;

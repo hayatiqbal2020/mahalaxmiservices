@@ -14,8 +14,9 @@ async function UserBadge() {
   );
 }
 
-// The frame shows at once; the user badge and each page check the login and
-// load their data behind Suspense boundaries.
+// The frame shows at once. Each page draws its own heading and card frames
+// straight away and loads its data inside them (see the Suspense boundaries
+// in the pages), so clicking a menu item never waits on the database.
 export default function PanelLayout({ children }: { children: React.ReactNode }) {
   return (
     <Suspense>
@@ -26,9 +27,7 @@ export default function PanelLayout({ children }: { children: React.ReactNode })
           </Suspense>
         }
       >
-        <Suspense fallback={<div className="adm-loading"><span></span></div>}>
-          {children}
-        </Suspense>
+        {children}
       </AdminShell>
     </Suspense>
   );

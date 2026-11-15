@@ -335,5 +335,5 @@ html{scroll-padding-top:90px}
 }
 
 /* Admin login button in the footer (admin pages are styled in app/admin/admin.css) */
-.admin-btn{display:inline-flex;align-items:center;gap:7px;margin-top:12px;padding:7px 16px;border:1px solid #3a3a42;border-radius:50px;color:#bbb;font-size:12px;font-weight:500;transition:.3s}
+.admin-btn{display:inline-flex;align-items:center;gap:7px;margin:0 0 16px;padding:7px 16px;border:1px solid #3a3a42;border-radius:50px;color:#bbb;font-size:12px;font-weight:500;transition:.3s}
 .admin-btn:hover{border-color:var(--orange);color:#fff}

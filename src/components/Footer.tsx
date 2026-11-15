@@ -10,6 +10,7 @@ export default function Footer() {
             <div className="logo-text"><strong>MAHALAXMI <em>SERVICES</em></strong><small>Fire Safety Solutions</small></div>
           </a>
           <p className="about-f">Authorised fire extinguisher agency in {site.city} providing sales, refilling, installation and AMC services for homes and businesses.</p>
+          <a href={site.adminLoginHref} className="admin-btn" rel="nofollow"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Admin Login</a>
           <div className="socials">
             {site.socials.facebook && <a href={site.socials.facebook} target="_blank" rel="noopener" aria-label="Facebook"><svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M14 9V7c0-1 .5-1.5 1.5-1.5H17V2h-3c-3 0-4 2-4 4.5V9H8v3.5h2V22h4v-9.5h2.6L17 9z"></path></svg></a>}
             {site.socials.instagram && <a href={site.socials.instagram} target="_blank" rel="noopener" aria-label="Instagram"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><rect x="2" y="2" width="20" height="20" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1" fill="#fff"></circle></svg></a>}
@@ -49,7 +50,6 @@ export default function Footer() {
         </div>
       </div>
       <div className="copy">© <span id="year">2026</span> Mahalaxmi Services. All rights reserved. | Stay Safe, Stay Protected 🔥
-        <div><a href={site.adminLoginHref} className="admin-btn" rel="nofollow"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Admin Login</a></div>
       </div>
     </footer>
   );
