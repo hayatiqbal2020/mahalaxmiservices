@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-// Reveal-on-scroll, stat counters and the footer year.
+// Reveal-on-scroll, stat counters, footer year, back-to-top and menu highlight.
 export default function SiteEffects() {
   useEffect(() => {
     const year = document.getElementById("year");
@@ -36,7 +36,35 @@ export default function SiteEffects() {
       { threshold: 0.15 },
     );
     document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
-    return () => io.disconnect();
+
+    // Back-to-top button appears after scrolling down
+    const toTop = document.getElementById("toTop");
+    const onScroll = () => toTop?.classList.toggle("show", window.scrollY > 600);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
+    // Highlight the menu link of the section being read
+    const links = document.querySelectorAll<HTMLAnchorElement>(
+      "#navLinks a:not(.btn)",
+    );
+    const spy = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return;
+          links.forEach((a) =>
+            a.classList.toggle("active", a.hash === `#${e.target.id}`),
+          );
+        });
+      },
+      { rootMargin: "-45% 0px -50% 0px" },
+    );
+    document.querySelectorAll("section[id]").forEach((el) => spy.observe(el));
+
+    return () => {
+      io.disconnect();
+      spy.disconnect();
+      window.removeEventListener("scroll", onScroll);
+    };
   }, []);
 
   return null;

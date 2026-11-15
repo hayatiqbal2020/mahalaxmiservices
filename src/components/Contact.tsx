@@ -17,6 +17,16 @@ export default function Contact() {
 
         <QuoteForm />
       </div>
+      <div className="container map-wrap reveal">
+        <iframe
+          className="map"
+          src={site.mapEmbedSrc}
+          title={`Map showing ${site.name}, ${site.city}`}
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+        ></iframe>
+        <a href={site.directionsHref} target="_blank" rel="noopener" className="btn btn-primary">📍 Get Directions</a>
+      </div>
     </section>
   );
 }

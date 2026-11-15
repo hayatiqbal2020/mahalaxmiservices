@@ -22,6 +22,7 @@ export default function Header() {
           <li><a href="#services">Services</a></li>
           <li><a href="#products">Products</a></li>
           <li><a href="#why">Why Us</a></li>
+          <li><a href="#faq">FAQ</a></li>
           <li><a href="#contact" className="btn btn-primary">Get Free Quote</a></li>
         </ul>
         <button
