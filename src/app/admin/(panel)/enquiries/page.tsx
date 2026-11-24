@@ -3,6 +3,7 @@ import EnquiryTable from "@/components/admin/EnquiryTable";
 import Loader from "@/components/admin/Loader";
 import PageHead from "@/components/admin/PageHead";
 import { formatDate, requireAdmin, type Enquiry } from "@/lib/admin";
+import { followupSetupMessage, MISSING_COLUMN } from "@/lib/enquiry-status";
 
 const LIMIT = 500; // the newest 500 are loaded
 
@@ -10,7 +11,7 @@ async function Enquiries() {
   const { supabase } = await requireAdmin();
   const { data, error } = await supabase
     .from("enquiry")
-    .select("id, name, phone, email, service, message, created_at")
+    .select("id, name, phone, email, service, message, created_at, status, notes")
     .order("created_at", { ascending: false })
     .limit(LIMIT)
     .returns<Enquiry[]>();
@@ -18,7 +19,12 @@ async function Enquiries() {
     ...e,
     received: formatDate(created_at),
   }));
-  return <EnquiryTable rows={rows} failed={Boolean(error)} />;
+  const message = !error
+    ? ""
+    : error.code === MISSING_COLUMN
+      ? followupSetupMessage
+      : "Could not load enquiries.";
+  return <EnquiryTable rows={rows} error={message} />;
 }
 
 // The heading and card frame show at once; the list loads inside the card.

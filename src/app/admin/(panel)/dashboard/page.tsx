@@ -4,6 +4,7 @@ import { Icon } from "@/components/admin/AdminShell";
 import Loader from "@/components/admin/Loader";
 import PageHead from "@/components/admin/PageHead";
 import { formatDate, requireAdmin, type Enquiry } from "@/lib/admin";
+import { MISSING_COLUMN, statusInfo } from "@/lib/enquiry-status";
 
 const MONTHS = 8;
 const TZ = "Asia/Kolkata";
@@ -29,8 +30,9 @@ async function DashboardData() {
   const since = `${months[0].key}-01T00:00:00+05:30`;
 
   const count = { count: "exact", head: true } as const;
-  const [total, users, pending, recent, latest] = await Promise.all([
+  const [total, fresh, users, pending, recent, latestWithStatus] = await Promise.all([
     supabase.from("enquiry").select("*", count),
+    supabase.from("enquiry").select("*", count).eq("status", "new"),
     supabase.from("profiles").select("*", count),
     supabase.from("profiles").select("*", count).eq("is_active", false),
     supabase
@@ -42,11 +44,21 @@ async function DashboardData() {
       .returns<Pick<Enquiry, "service" | "created_at">[]>(),
     supabase
       .from("enquiry")
-      .select("id, name, phone, email, service, message, created_at")
+      .select("id, name, phone, email, service, message, created_at, status")
       .order("created_at", { ascending: false })
       .limit(5)
       .returns<Enquiry[]>(),
   ]);
+  // Before the follow-up database update is run there is no status column.
+  const noFollowup = fresh.error?.code === MISSING_COLUMN;
+  const latest = noFollowup
+    ? await supabase
+        .from("enquiry")
+        .select("id, name, phone, email, service, message, created_at")
+        .order("created_at", { ascending: false })
+        .limit(5)
+        .returns<Enquiry[]>()
+    : latestWithStatus;
 
   const perMonth = new Map(months.map((m) => [m.key, 0]));
   const perService = new Map<string, number>();
@@ -70,10 +82,17 @@ async function DashboardData() {
   const topService = services[0]?.[1] ?? 1;
 
   const stats = [
-    { label: "Total enquiries", value: total.count ?? 0, detail: "From the website form", icon: "enquiry", tone: "purple", href: "/admin/enquiries" },
-    { label: "This month", value: thisMonth, detail: `${todayCount} received today`, icon: "dashboard", tone: "green", href: "/admin/enquiries" },
+    {
+      label: "New enquiries",
+      value: noFollowup ? "—" : (fresh.count ?? 0),
+      detail: noFollowup ? "Run the follow-up database update" : "Not contacted yet",
+      icon: "enquiry",
+      tone: "orange",
+      href: "/admin/enquiries?status=new",
+    },
+    { label: "Total enquiries", value: total.count ?? 0, detail: `${thisMonth} this month · ${todayCount} today`, icon: "dashboard", tone: "purple", href: "/admin/enquiries" },
     { label: "Users", value: users.count ?? 0, detail: "Can log in to this panel", icon: "users", tone: "blue", href: "/admin/users" },
-    { label: "Waiting for activation", value: pending.count ?? 0, detail: "New sign-ups to review", icon: "users", tone: "orange", href: "/admin/users" },
+    { label: "Waiting for activation", value: pending.count ?? 0, detail: "New sign-ups to review", icon: "users", tone: "green", href: "/admin/users" },
   ] as const;
 
   return (
@@ -139,13 +158,14 @@ async function DashboardData() {
         {latest.data?.length ? (
           <div className="adm-table-wrap">
             <table className="adm-table">
-              <thead><tr><th>Name</th><th>Phone</th><th>Service</th><th>Received</th></tr></thead>
+              <thead><tr><th>Name</th><th>Phone</th><th>Service</th><th>Status</th><th>Received</th></tr></thead>
               <tbody>
                 {latest.data.map((e) => (
                   <tr key={e.id}>
                     <td data-label="Name"><strong>{e.name}</strong></td>
                     <td data-label="Phone" className="nowrap"><a href={`tel:${e.phone}`}>{e.phone}</a></td>
                     <td data-label="Service">{e.service || "—"}</td>
+                    <td data-label="Status">{e.status ? <span><span className={`pill ${statusInfo(e.status).tone}`}><i></i>{statusInfo(e.status).label}</span></span> : "—"}</td>
                     <td data-label="Received" className="nowrap">{formatDate(e.created_at)}</td>
                   </tr>
                 ))}
@@ -161,10 +181,10 @@ async function DashboardData() {
 }
 
 const CARDS = [
-  ["Total enquiries", "purple", "enquiry"],
-  ["This month", "green", "dashboard"],
+  ["New enquiries", "orange", "enquiry"],
+  ["Total enquiries", "purple", "dashboard"],
   ["Users", "blue", "users"],
-  ["Waiting for activation", "orange", "users"],
+  ["Waiting for activation", "green", "users"],
 ] as const;
 
 // Same frames as the real dashboard, with loaders where the numbers go.

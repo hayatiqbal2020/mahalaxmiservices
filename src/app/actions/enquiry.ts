@@ -1,5 +1,7 @@
 "use server";
 
+import { after } from "next/server";
+import { sendEnquiryAlert } from "@/lib/notify";
 import { supabaseConfigured } from "@/lib/supabase/env";
 import { createAnonClient } from "@/lib/supabase/server";
 
@@ -23,15 +25,19 @@ export async function saveEnquiry(input: EnquiryInput): Promise<{ ok: boolean }>
   if (!name || phone.length < 5) return { ok: false };
   if (!supabaseConfigured) return { ok: false };
 
-  const { error } = await createAnonClient()
-    .from("enquiry")
-    .insert({
-      name,
-      phone,
-      email: clean(input.email, 200) || null,
-      service: clean(input.service, 120) || null,
-      message: clean(input.message, 2000) || null,
-    });
-  if (error) console.error("Saving enquiry failed:", error.message);
-  return { ok: !error };
+  const enquiry = {
+    name,
+    phone,
+    email: clean(input.email, 200) || null,
+    service: clean(input.service, 120) || null,
+    message: clean(input.message, 2000) || null,
+  };
+  const { error } = await createAnonClient().from("enquiry").insert(enquiry);
+  if (error) {
+    console.error("Saving enquiry failed:", error.message);
+    return { ok: false };
+  }
+  // Email the business once the customer has had their answer.
+  after(() => sendEnquiryAlert(enquiry));
+  return { ok: true };
 }
