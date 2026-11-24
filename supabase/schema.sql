@@ -14,6 +14,9 @@ create table if not exists public.enquiry (
 );
 create index if not exists enquiry_created_at_idx on public.enquiry (created_at desc);
 
+-- Follow-up fields (status, notes) are added by 002_enquiry_followup.sql,
+-- which runs at the end of this file.
+
 -- 2. Admin users -----------------------------------------------------------
 -- Login itself lives in auth.users (managed by Supabase). This table holds
 -- one row per login with the details the admin panel shows and edits.
@@ -111,3 +114,28 @@ create policy "Active admins update profiles" on public.profiles
   for update to authenticated
   using ((select public.is_active_admin()))
   with check (true);
+
+-- 4. Enquiry follow-up (same as supabase/002_enquiry_followup.sql) -------
+
+alter table public.enquiry
+  add column if not exists status text not null default 'new',
+  add column if not exists notes text not null default '',
+  add column if not exists updated_at timestamptz;
+
+alter table public.enquiry drop constraint if exists enquiry_status_check;
+alter table public.enquiry add constraint enquiry_status_check
+  check (status in ('new', 'contacted', 'quoted', 'won', 'lost'));
+alter table public.enquiry drop constraint if exists enquiry_notes_check;
+alter table public.enquiry add constraint enquiry_notes_check
+  check (char_length(notes) <= 4000);
+
+create index if not exists enquiry_status_idx on public.enquiry (status);
+
+-- Admins may change only the follow-up fields, never what the customer sent.
+grant update (status, notes, updated_at) on public.enquiry to authenticated;
+
+drop policy if exists "Active admins update enquiries" on public.enquiry;
+create policy "Active admins update enquiries" on public.enquiry
+  for update to authenticated
+  using ((select public.is_active_admin()))
+  with check ((select public.is_active_admin()));

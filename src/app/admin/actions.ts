@@ -4,6 +4,11 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/admin";
+import {
+  followupSetupMessage,
+  isEnquiryStatus,
+  MISSING_COLUMN,
+} from "@/lib/enquiry-status";
 import { site } from "@/lib/site";
 import { notConfiguredMessage, supabaseConfigured } from "@/lib/supabase/env";
 import {
@@ -105,6 +110,41 @@ export async function forgotPassword(
 export async function logout() {
   if (supabaseConfigured) await (await createClient()).auth.signOut();
   redirect("/admin/login");
+}
+
+// ---- Enquiry page ---------------------------------------------------------
+
+// Saves an enquiry's follow-up status and/or notes. Only the fields sent are changed.
+export async function updateEnquiry(
+  _: FormState,
+  form: FormData,
+): Promise<FormState> {
+  const { supabase } = await requireAdmin();
+  const id = Number(str(form, "id", 20));
+  if (!Number.isInteger(id) || id <= 0)
+    return { ok: false, message: "Enquiry not found." };
+
+  const change: { status?: string; notes?: string; updated_at: string } = {
+    updated_at: new Date().toISOString(),
+  };
+  if (form.has("status")) {
+    const status = str(form, "status", 20);
+    if (!isEnquiryStatus(status)) return { ok: false, message: "Unknown status." };
+    change.status = status;
+  }
+  if (form.has("notes")) change.notes = str(form, "notes", 4000);
+
+  const { data, error } = await supabase
+    .from("enquiry")
+    .update(change)
+    .eq("id", id)
+    .select("id");
+  if (error?.code === MISSING_COLUMN) return { ok: false, message: followupSetupMessage };
+  if (error || !data?.length)
+    return { ok: false, message: "Could not save. Please try again." };
+  revalidatePath("/admin/enquiries");
+  revalidatePath("/admin/dashboard");
+  return { ok: true, message: "Saved." };
 }
 
 // ---- Users page -----------------------------------------------------------

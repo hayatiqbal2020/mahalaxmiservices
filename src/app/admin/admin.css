@@ -136,6 +136,31 @@ a.adm-stat:hover{box-shadow:0 10px 26px #242a4d14;transform:translateY(-2px)}
 .pill i{width:5px;height:5px;border-radius:50%;background:currentColor}
 .pill.on{background:#eaf8ef;color:#50a96c}
 .pill.off{background:#f0f1f5;color:#898d9d}
+.pill.info{background:#e9f7ff;color:#2f9bc9}
+.pill.warn{background:#fff5e5;color:#cf9135}
+.pill.purple{background:#eef0ff;color:#5565e2}
+.adm-sub{display:block;margin-top:3px;font-size:11.5px}
+.adm-table tr.is-new td:first-child{box-shadow:inset 3px 0 0 #48b5e2}
+.adm-follow{display:grid;gap:6px;min-width:130px}
+.adm-status{appearance:none;-webkit-appearance:none;max-width:140px;min-height:30px;padding:0 26px 0 10px;border:1px solid transparent;border-radius:15px;font:inherit;font-size:11.5px;font-weight:600;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23777c8e' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.adm-status:focus{outline:0;border-color:var(--a-blue);box-shadow:0 0 0 3px #6676f424}
+.adm-status[disabled]{opacity:.6;cursor:wait}
+.adm-status.info{background-color:#e9f7ff;color:#2f9bc9}
+.adm-status.warn{background-color:#fff5e5;color:#b97d22}
+.adm-status.purple{background-color:#eef0ff;color:#5565e2}
+.adm-status.on{background-color:#eaf8ef;color:#3f9a5c}
+.adm-status.off{background-color:#f0f1f5;color:#7b7f8f}
+.adm-note-text{max-width:240px;padding:7px 9px;border-radius:7px;background:#fafbfe;border:1px solid #eef0f6;color:#6d7284;font-size:11.5px;line-height:1.5;white-space:pre-wrap;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.adm-tabs{display:flex;gap:4px;overflow-x:auto;padding:10px 16px;border-bottom:1px solid var(--a-line);scrollbar-width:none}
+.adm-tabs::-webkit-scrollbar{display:none}
+.adm-tabs button{display:inline-flex;align-items:center;gap:6px;flex:0 0 auto;min-height:32px;padding:0 12px;border:0;border-radius:7px;background:transparent;color:#777c8e;font-size:12px;font-weight:600}
+.adm-tabs button:hover{background:#f5f6ff;color:var(--a-blue-dark)}
+.adm-tabs button.on{background:#eef0ff;color:var(--a-blue-dark)}
+.adm-tabs button span{min-width:20px;padding:1px 6px;border-radius:10px;background:#f0f1f5;color:#898d9d;font-size:10px}
+.adm-tabs button.on span{background:var(--a-blue);color:#fff}
+.adm .field select,.adm .field textarea{width:100%;padding:11px 13px;border:1px solid #e3e6ef;border-radius:8px;background:#fff;font:inherit;font-size:14px;color:var(--a-ink)}
+.adm .field textarea{min-height:120px;resize:vertical}
+.adm .field select:focus,.adm .field textarea:focus{outline:0;border-color:var(--a-blue);box-shadow:0 0 0 3px #6676f424}
 .adm-actions{display:flex;gap:6px;flex-wrap:wrap}
 .adm-act{display:grid;place-items:center;width:32px;height:32px;padding:0;border:1px solid #e7e9f0;border-radius:7px;background:#fff;color:#73788a;transition:.18s}
 .adm-act:hover{border-color:#cdd2ed;background:#f5f6ff;color:var(--a-blue-dark)}
@@ -196,5 +221,8 @@ a.adm-stat:hover{box-shadow:0 10px 26px #242a4d14;transform:translateY(-2px)}
   .adm-table td.nowrap{white-space:normal}
   .adm-table td::before{content:attr(data-label);padding-top:2px;color:#9ba0b0;font-size:10px;font-weight:700;letter-spacing:.55px;text-transform:uppercase}
   .adm-msg{max-width:none}
+  .adm-note-text{max-width:none}
+  .adm-table tr.is-new td:first-child{box-shadow:none}
+  .adm-table tr.is-new{box-shadow:inset 3px 0 0 #48b5e2}
 }
 @media(max-width:420px){.adm-stats{grid-template-columns:minmax(0,1fr)}}

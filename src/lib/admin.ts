@@ -22,6 +22,9 @@ export type Enquiry = {
   service: string | null;
   message: string | null;
   created_at: string;
+  status: string;
+  notes: string;
+  updated_at: string | null;
 };
 
 // Every admin page and admin action calls this first. It sends anyone who is
