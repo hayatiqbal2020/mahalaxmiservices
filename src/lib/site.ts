@@ -6,7 +6,9 @@ const fullAddress =
 
 export const site = {
   name: "Mahalaxmi Services",
-  url: "https://www.mahalaxmiservices.co.in",
+  // Main address. The www. version redirects here (set in Vercel), so links,
+  // the sitemap and Google all use this one.
+  url: "https://mahalaxmiservices.co.in",
   city: "Ranchi",
 
   phone: "+91 9304126825",
@@ -45,5 +47,10 @@ export const site = {
 
   // Optional, set in .env.local (see .env.example).
   gaId: process.env.NEXT_PUBLIC_GA_ID ?? "",
-  googleVerification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ?? "",
+  // Google Search Console ownership code for https://mahalaxmiservices.co.in/
+  // (property added 25 Nov 2026). Public by design: Google reads it from the
+  // page's HTML. Keep it, or Search Console loses access.
+  googleVerification:
+    process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ||
+    "E6IIu_s6EUOQUQ3MIZXNjSuoR0dO3S2EuwqTmrWfeq0",
 };
